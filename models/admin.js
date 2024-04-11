@@ -7,6 +7,7 @@ const adminSchema = new Schema({
   email: { type: String, unique: true },
   isVerified: { type: Boolean, default: false },
   isLogedIn: { type: Boolean, default: false },
+  name: { type: String, required: true },
   regOTP: String,
   sigOTP: String,
   regOTPExpiration: Date,
@@ -39,8 +40,9 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-adminSchema.statics.sendOTP = async function (email) {
+adminSchema.statics.sendOTP = async function (email, name) {
   let admin = await this.findOne({ email });
+  console.log(name);
   if (admin) throw new Error("Admin already registered.");
 
   const regOTP = generateOTP();
@@ -48,6 +50,7 @@ adminSchema.statics.sendOTP = async function (email) {
   regOTPExpiration.setMinutes(regOTPExpiration.getMinutes() + 5);
 
   admin = new Admin({
+    name,
     email,
     regOTP,
     regOTPExpiration,

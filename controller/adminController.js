@@ -7,10 +7,10 @@ const createToken = (_id) => {
 
 // Create a new admin
 exports.register = async (req, res) => {
-  const { email } = req.body;
+  const { email, name } = req.body;
 
   try {
-    const admin = await Admin.sendOTP(email);
+    const admin = await Admin.sendOTP(email, name);
     res.status(200).json({ email, admin });
   } catch (error) {
     res.status(400).json({ error: error.message });
