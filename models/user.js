@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  name: { type: String, required: true },
   email: { type: String, unique: true },
   isVerified: { type: Boolean, default: false },
   isLogedIn: { type: Boolean, default: false },
@@ -39,7 +40,7 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-userSchema.statics.sendOTP = async function (email) {
+userSchema.statics.sendOTP = async function (email, name) {
   let user = await this.findOne({ email });
   if (user) throw new Error("User already registered.");
 
@@ -48,6 +49,7 @@ userSchema.statics.sendOTP = async function (email) {
   regOTPExpiration.setMinutes(regOTPExpiration.getMinutes() + 5);
 
   user = new User({
+    name,
     email,
     regOTP,
     regOTPExpiration,
@@ -72,6 +74,7 @@ userSchema.statics.sendOTP = async function (email) {
 
 userSchema.statics.verifyOTP = async function (email, otp) {
   const user = await this.findOne({ email });
+  console.log(user);
   if (!user) throw new Error("User not found.");
 
   if (user.regOTP !== otp || user.regOTPExpiration < new Date()) {
@@ -79,7 +82,7 @@ userSchema.statics.verifyOTP = async function (email, otp) {
   }
 
   user.isVerified = true;
-  await user.save();
+  return await user.save();
 };
 
 //resend OTP

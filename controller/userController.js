@@ -8,10 +8,10 @@ const createToken = (_id) => {
 
 // Register a new user
 exports.register = async (req, res) => {
-  const { email } = req.body;
+  const { email, name } = req.body;
 
   try {
-    const user = await User.sendOTP(email);
+    const user = await User.sendOTP(email, name);
 
     res.status(200).json({ email, user });
   } catch (error) {
@@ -24,9 +24,9 @@ exports.verify = async (req, res) => {
   const { email, otp } = req.body;
 
   try {
-    await User.verifyOTP(email, otp);
+    const user = await User.verifyOTP(email, otp);
     const token = createToken(user._id);
-    res.status(200).json({ token });
+    res.status(200).json({ user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
