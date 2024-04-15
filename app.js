@@ -11,6 +11,7 @@ const productRouter = require("./routes/product");
 const userRouter = require("./routes/users");
 const userProductRouter = require("./routes/userProduct");
 const cartRouter = require("./routes/cart");
+const userLikedRouter = require("./routes/like");
 
 var app = express();
 
@@ -37,6 +38,9 @@ app.use("/api/product", userProductRouter);
 
 // Add the cartRouter to the app
 app.use("/api/cart", cartRouter);
+
+// Add the userLikedRouter to the app
+app.use("/api/like", userLikedRouter);
 
 mongoose
   .connect(process.env.MONG_URI)
