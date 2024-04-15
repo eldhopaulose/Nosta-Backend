@@ -37,7 +37,7 @@ exports.getLikes = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    const likes = await Like.find({ userId }).populate("productId");
+    const likes = await Like.find({ userId });
 
     res.status(200).json({ success: true, likes });
   } catch (error) {
