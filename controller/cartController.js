@@ -45,6 +45,47 @@ exports.addToCart = async (req, res) => {
   }
 };
 
+exports.decrimentCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const productId = req.params.id;
+    let { quantity } = req.body;
+    // If quantity is not provided or invalid, default to 1
+    if (!quantity || isNaN(quantity) || quantity <= 0) {
+      quantity = 1;
+    }
+    const user = await User.findById(userId);
+    const product = await Product.findById(productId);
+    if (!user || !product) {
+      res
+        .status(404)
+        .json({ success: false, message: "User or product not found" });
+      return;
+    }
+    const cart = await Cart.findOne({ userId: userId });
+    if (!cart) {
+      const newCart = await Cart.create({
+        userId,
+        items: [{ productId: productId, quantity }],
+      });
+      res.status(200).json({ success: true, cart: newCart });
+    } else {
+      const productIndex = cart.items.findIndex(
+        (item) => item.productId.toString() === productId
+      );
+      if (productIndex >= 0) {
+        cart.items[productIndex].quantity -= quantity;
+      } else {
+        cart.items.push({ productId: productId, quantity });
+      }
+      await cart.save();
+      res.status(200).json({ success: true, cart });
+    }
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
 exports.getAllCarts = async (req, res) => {
   try {
     const carts = await Cart.find()

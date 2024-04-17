@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 // Secret key for JWT
 const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.USER_JWT_SCERET, { expiresIn: "1d" });
+  return jwt.sign({ _id }, process.env.USER_JWT_SCERET, { expiresIn: "100d" });
 };
 
 // Register a new user

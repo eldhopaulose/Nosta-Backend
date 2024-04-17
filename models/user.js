@@ -144,7 +144,11 @@ userSchema.statics.verifySignInOTP = async function (email, otp) {
 
   user.isLogedIn = true;
 
-  // Schedule a task to delete the user if not verified within 5 minutes
+  const millisecondsInADay = 24 * 60 * 60 * 1000; // milliseconds in a day
+  const days = 100; // number of days
+
+  const durationInMilliseconds = days * millisecondsInADay;
+
   setTimeout(async () => {
     const userisLogedIn = await this.findOne({ email, isLogedIn: true });
     if (userisLogedIn) {
@@ -152,7 +156,7 @@ userSchema.statics.verifySignInOTP = async function (email, otp) {
       await user.save();
       console.log(`User ${email} Clear Logedin.`);
     }
-  }, 1 * 60 * 1000);
+  }, durationInMilliseconds);
 
   return await user.save();
 };
