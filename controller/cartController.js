@@ -167,3 +167,40 @@ exports.updateCartQuantity = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+exports.deleteCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const cart = await Cart.findOneAndDelete({ userId: userId });
+    if (!cart) {
+      res
+        .status(404)
+        .json({ success: false, message: "Cart not found for the user" });
+      return;
+    }
+    res.status(200).json({ success: true, cart });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+exports.deleteSingleCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const productId = req.params.id;
+    const cart = await Cart.findOneAndUpdate(
+      { userId: userId },
+      { $pull: { items: { productId: productId } } },
+      { new: true }
+    );
+    if (!cart) {
+      res
+        .status(404)
+        .json({ success: false, message: "Cart not found for the user" });
+      return;
+    }
+    res.status(200).json({ success: true, cart });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
