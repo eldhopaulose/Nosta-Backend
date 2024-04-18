@@ -17,6 +17,10 @@ const cartSchema = new Schema({
         ref: "Product",
         required: true,
       },
+      totalCost: {
+        type: Number,
+        ref: "Product.discount",
+      },
       quantity: {
         type: Number,
         default: 1,

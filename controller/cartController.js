@@ -25,7 +25,13 @@ exports.addToCart = async (req, res) => {
     if (!cart) {
       const newCart = await Cart.create({
         userId,
-        items: [{ productId: productId, quantity }],
+        items: [
+          {
+            productId: productId,
+            quantity,
+            totalCost: quantity * product.discount,
+          },
+        ],
       });
       res.status(200).json({ success: true, cart: newCart });
     } else {
@@ -34,8 +40,14 @@ exports.addToCart = async (req, res) => {
       );
       if (productIndex >= 0) {
         cart.items[productIndex].quantity += quantity;
+        cart.items[productIndex].totalCost =
+          cart.items[productIndex].quantity * product.discount;
       } else {
-        cart.items.push({ productId: productId, quantity });
+        cart.items.push({
+          productId: productId,
+          quantity,
+          totalCost: quantity * product.discount,
+        });
       }
       await cart.save();
       res.status(200).json({ success: true, cart });
@@ -44,25 +56,29 @@ exports.addToCart = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 exports.decrimentCart = async (req, res) => {
   try {
     const userId = req.user._id;
     const productId = req.params.id;
     let { quantity } = req.body;
+
     // If quantity is not provided or invalid, default to 1
     if (!quantity || isNaN(quantity) || quantity <= 0) {
       quantity = 1;
     }
+
     const user = await User.findById(userId);
     const product = await Product.findById(productId);
+
     if (!user || !product) {
       res
         .status(404)
         .json({ success: false, message: "User or product not found" });
       return;
     }
+
     const cart = await Cart.findOne({ userId: userId });
+
     if (!cart) {
       const newCart = await Cart.create({
         userId,
@@ -73,11 +89,23 @@ exports.decrimentCart = async (req, res) => {
       const productIndex = cart.items.findIndex(
         (item) => item.productId.toString() === productId
       );
+
       if (productIndex >= 0) {
-        cart.items[productIndex].quantity -= quantity;
+        // Ensure quantity doesn't go below 1
+        cart.items[productIndex].quantity = Math.max(
+          1,
+          cart.items[productIndex].quantity - quantity
+        );
+        cart.items[productIndex].totalCost =
+          cart.items[productIndex].quantity * product.discount;
       } else {
-        cart.items.push({ productId: productId, quantity });
+        cart.items.push({
+          productId: productId,
+          quantity,
+          totalCost: quantity * product.discount,
+        });
       }
+
       await cart.save();
       res.status(200).json({ success: true, cart });
     }

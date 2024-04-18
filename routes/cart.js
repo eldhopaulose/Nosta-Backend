@@ -4,6 +4,7 @@ const router = express.Router();
 const cartController = require("../controller/cartController");
 const requireUserAuth = require("../middleware/requireUserAuth");
 
+router.use(requireUserAuth);
 // Add a product to the cart
 router.post("/add/:id", cartController.addToCart);
 router.post("/decriment/:id", cartController.decrimentCart);
