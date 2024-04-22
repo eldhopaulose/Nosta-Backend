@@ -3,6 +3,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -12,9 +13,11 @@ const userRouter = require("./routes/users");
 const userProductRouter = require("./routes/userProduct");
 const cartRouter = require("./routes/cart");
 const userLikedRouter = require("./routes/like");
+const adressRouter = require("./routes/adress");
 
 var app = express();
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -41,6 +44,9 @@ app.use("/api/cart", cartRouter);
 
 // Add the userLikedRouter to the app
 app.use("/api/like", userLikedRouter);
+
+// Add the adressRouter to the app
+app.use("/api/adress", adressRouter);
 
 mongoose
   .connect(process.env.MONG_URI)
