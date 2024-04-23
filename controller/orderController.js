@@ -2,45 +2,33 @@ const Order = require("../models/order");
 
 exports.orderPlaced = async (req, res) => {
   try {
-    // Check if required fields are present
-    if (!req.body.items || req.body.items.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "Please provide items in the order." });
-    }
-    if (
-      !req.body.items.every(
-        (item) =>
-          item.productId &&
-          item.quantity &&
-          item.totalCost &&
-          item.address &&
-          item.status
-      )
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Please provide all required fields for each item." });
+    const userId = req.user._id;
+
+    const { productId, totalCost, address } = req.body;
+
+    if (!productId || !totalCost || !address) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const userId = req.user._id;
-    const order = new Order({
-      ...req.body,
-      items: req.body.items.map((item) => ({ ...item, userId })),
+    const newOrder = new Order({
+      items: [{ productId, totalCost, address, userId }],
     });
-    await order.save();
-    res.status(201).json({ success: true, order });
+    const savedOrder = await newOrder.save();
+    res.status(201).json(savedOrder);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate({
-      path: "items.userId items.productId items.address",
-      options: { strictPopulate: false },
-    });
+    const orders = await Order.find()
+      .populate({
+        path: "items.productId",
+        model: "Product",
+      })
+      .populate("items.userId items.address items.productId");
+
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });

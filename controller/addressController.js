@@ -20,6 +20,7 @@ exports.addressCreate = async (req, res) => {
 
 exports.addressGet = async (req, res) => {
   const userId = req.user._id;
+  console.log(userId);
   try {
     const address = await Address.find({ userId });
     res.status(200).json({ success: true, address });
