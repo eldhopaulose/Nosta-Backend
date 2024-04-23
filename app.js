@@ -13,7 +13,8 @@ const userRouter = require("./routes/users");
 const userProductRouter = require("./routes/userProduct");
 const cartRouter = require("./routes/cart");
 const userLikedRouter = require("./routes/like");
-const adressRouter = require("./routes/adress");
+const adressRouter = require("./routes/address");
+const orderRouter = require("./routes/order");
 
 var app = express();
 
@@ -47,6 +48,9 @@ app.use("/api/like", userLikedRouter);
 
 // Add the adressRouter to the app
 app.use("/api/adress", adressRouter);
+
+// Add the orderRouter to the app
+app.use("/api/order", orderRouter);
 
 mongoose
   .connect(process.env.MONG_URI)

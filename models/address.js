@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const adressSchema = new Schema({
+const addressSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -34,6 +34,6 @@ const adressSchema = new Schema({
   },
 });
 
-const Adress = mongoose.model("Adress", adressSchema);
+const Address = mongoose.model("Address", addressSchema);
 
-module.exports = Adress;
+module.exports = Address;
