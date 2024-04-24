@@ -1,12 +1,14 @@
 const express = require("express");
 const product = require("../controller/productController");
 const requireAdminAuth = require("../middleware/requireAdminAuth");
-
 const router = express.Router();
 
-router.use(requireAdminAuth);
+router.post("/create", requireAdminAuth, product.createProduct);
 
-router.post("/create", product.createProduct);
 router.get("/all", product.getAllProducts);
+
+router.get("/findproduct/:id", product.findProduct);
+
+router.patch("/updateProduct/:id", requireAdminAuth, product.updateProduct);
 
 module.exports = router;

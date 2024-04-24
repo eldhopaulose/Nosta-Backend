@@ -11,6 +11,11 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
+  originalPrice: {
+    type: String,
+    required: true,
+  },
+
   discount: {
     type: String,
   },
