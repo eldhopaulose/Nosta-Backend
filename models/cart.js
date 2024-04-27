@@ -19,7 +19,7 @@ const cartSchema = new Schema({
       },
       totalCost: {
         type: Number,
-        ref: "Product.discount",
+        ref: "Product.price",
       },
       quantity: {
         type: Number,
