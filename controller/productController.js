@@ -76,6 +76,7 @@ exports.updateProduct = async (req, res) => {
   } = req.body;
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
+      id,
       {
         name,
         price,
@@ -87,7 +88,6 @@ exports.updateProduct = async (req, res) => {
         category: [category, "All"],
         shippingCost,
       },
-      updatedData,
       {
         new: true,
       }
