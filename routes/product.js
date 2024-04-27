@@ -11,4 +11,6 @@ router.get("/findproduct/:id", product.findProduct);
 
 router.patch("/updateProduct/:id", requireAdminAuth, product.updateProduct);
 
+router.delete("/deleteProduct/:id", requireAdminAuth, product.deleteProduct);
+
 module.exports = router;
