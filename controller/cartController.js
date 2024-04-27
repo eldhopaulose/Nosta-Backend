@@ -29,7 +29,7 @@ exports.addToCart = async (req, res) => {
           {
             productId: productId,
             quantity,
-            totalCost: quantity * product.discount,
+            totalCost: quantity * product.price,
           },
         ],
       });
@@ -41,12 +41,12 @@ exports.addToCart = async (req, res) => {
       if (productIndex >= 0) {
         cart.items[productIndex].quantity += quantity;
         cart.items[productIndex].totalCost =
-          cart.items[productIndex].quantity * product.discount;
+          cart.items[productIndex].quantity * product.price;
       } else {
         cart.items.push({
           productId: productId,
           quantity,
-          totalCost: quantity * product.discount,
+          totalCost: quantity * product.price,
         });
       }
       await cart.save();
@@ -97,12 +97,12 @@ exports.decrimentCart = async (req, res) => {
           cart.items[productIndex].quantity - quantity
         );
         cart.items[productIndex].totalCost =
-          cart.items[productIndex].quantity * product.discount;
+          cart.items[productIndex].quantity * product.price;
       } else {
         cart.items.push({
           productId: productId,
           quantity,
-          totalCost: quantity * product.discount,
+          totalCost: quantity * product.price,
         });
       }
 
