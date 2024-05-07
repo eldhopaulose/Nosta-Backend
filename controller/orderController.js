@@ -24,10 +24,17 @@ exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate({
-        path: "items.productId",
-        model: "Cart",
+        path: "items",
+        populate: {
+          path: "productId",
+          model: "Cart",
+          populate: {
+            path: "items.productId",
+            model: "Product",
+          },
+        },
       })
-      .populate("items.userId items.address items.productId");
+      .populate("items.userId items.address");
 
     res.status(200).json({ orders });
   } catch (error) {
