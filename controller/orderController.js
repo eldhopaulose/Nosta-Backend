@@ -4,8 +4,8 @@ const Cart = require("../models/cart");
 exports.orderPlaced = async (req, res) => {
   try {
     const userId = req.user._id;
-
-    const { addressId } = req.body;
+    console.log(userId);
+    const { totalCost, address } = req.body;
 
     if (!addressId) {
       return res.status(400).json({ message: "Address ID is required" });
@@ -29,7 +29,8 @@ exports.orderPlaced = async (req, res) => {
     const newOrder = new Order({
       userId,
       items: orderItems,
-      address: addressId,
+      address: address,
+      totalCost,
     });
 
     // Save the order
