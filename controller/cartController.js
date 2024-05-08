@@ -116,7 +116,8 @@ exports.decrimentCart = async (req, res) => {
 
 exports.getAllCarts = async (req, res) => {
   try {
-    const carts = await Cart.find()
+    const userId = req.user._id;
+    const carts = await Cart.find({ userId })
       .populate("userId")
       .populate("items.productId");
     res.status(200).json({ success: true, carts });
