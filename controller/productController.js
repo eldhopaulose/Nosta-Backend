@@ -61,37 +61,55 @@ exports.findProduct = async (req, res) => {
 
 // Update a product
 
+// exports.updateProduct = async (req, res) => {
+//   const { id } = req.params;
+//   const {
+//     name,
+//     price,
+//     originalPrice,
+//     discount,
+//     thumbnail,
+//     images,
+//     description,
+//     category,
+//     shippingCost,
+//   } = req.body;
+//   try {
+//     const updatedProduct = await Product.findByIdAndUpdate(
+//       id,
+//       {
+//         name,
+//         price,
+//         originalPrice,
+//         discount,
+//         thumbnail,
+//         images,
+//         description,
+//         category: [category, "All"],
+//         shippingCost,
+//       },
+//       {
+//         new: true,
+//       }
+//     );
+//     if (!updatedProduct) {
+//       return res.status(404).json({ error: "Product not found" });
+//     }
+//     res.status(200).json({ status: "ok", product: updatedProduct });
+//   } catch (error) {
+//     console.error("Error updating product:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
-  const {
-    name,
-    price,
-    originalPrice,
-    discount,
-    thumbnail,
-    images,
-    description,
-    category,
-    shippingCost,
-  } = req.body;
+  const updatedData = req.body;
+  console.log(updatedData);
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id,
-      {
-        name,
-        price,
-        originalPrice,
-        discount,
-        thumbnail,
-        images,
-        description,
-        category: [category, "All"],
-        shippingCost,
-      },
-      {
-        new: true,
-      }
-    );
+    const updatedProduct = await Product.findByIdAndUpdate(id, updatedData, {
+      new: true,
+    });
     if (!updatedProduct) {
       return res.status(404).json({ error: "Product not found" });
     }
