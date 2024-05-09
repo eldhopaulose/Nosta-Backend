@@ -16,27 +16,19 @@ exports.orderPlaced = async (req, res) => {
     if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) {
       throw new Error("No cart or cart items found for this user.");
     }
+    const order = new Order({
+      userId,
+      items: cart.items,
+      address,
+      orderDate: new Date(),
+      status: "Placed",
+    });
 
-    // Use Promise.all to wait for all the promises to resolve
-    const orderItems = await Promise.all(
-      cart.items.map(async (item) => {
-        try {
-          const product = await Product.findById(item.productId);
-          if (!product) {
-            throw new Error(`Product not found for ID: ${item.productId}`);
-          }
-          const totalCost = product.price * item.quantity;
-          return {
-            productId: item.productId,
-            quantity: item.quantity,
-            totalCost,
-          };
-        } catch (error) {
-          throw error; // This will be caught by the outer try-catch block
-        }
-      })
-    );
+    await order.save();
+    // Clear the cart after placing the order
+    await Cart.findByIdAndRemove(cart._id);
 
+    res.status(200).json({ order });
     // ... rest of your code to create and save the order
   } catch (error) {
     console.error("Order Placement Error:", error);
