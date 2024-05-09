@@ -4,10 +4,9 @@ const Cart = require("../models/cart");
 exports.orderPlaced = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log(userId);
-    const { totalCost, address } = req.body;
+    console.log("User ID:", userId);
+    const { address } = req.body; // Removed totalCost from destructuring as it will be calculated
 
-    // Assuming address is the correct variable to check
     if (!address) {
       return res.status(400).json({ message: "Address is required" });
     }
@@ -17,20 +16,31 @@ exports.orderPlaced = async (req, res) => {
       throw new Error("No cart found for this user.");
     }
 
-    // Map cart items to order items
-    // Assuming you have a function to map and calculate totalCost for each item
-    const orderItems = cart.items.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      // Calculate the total cost for each item
-    }));
+    // Map cart items to order items and calculate total cost for each item
+    const orderItems = await Promise.all(
+      cart.items.map(async (item) => {
+        const product = await Product.findById(item.productId);
+        const totalCost = product.price * item.quantity;
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+          totalCost, // This is the total cost for each item
+        };
+      })
+    );
+
+    // Calculate the total cost for the entire order
+    const orderTotalCost = orderItems.reduce(
+      (acc, item) => acc + item.totalCost,
+      0
+    );
 
     // Create the order
     const newOrder = new Order({
       userId,
       items: orderItems,
-      address: address,
-      totalCost,
+      address,
+      totalCost: orderTotalCost, // This is the total cost for the entire order
     });
 
     // Save the order
@@ -42,10 +52,10 @@ exports.orderPlaced = async (req, res) => {
 
     res.status(201).json(savedOrder);
   } catch (error) {
+    console.error("Order Placement Error:", error); // Log the error for debugging
     res.status(500).json({ message: error.message });
   }
 };
-
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
