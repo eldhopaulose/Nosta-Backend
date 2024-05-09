@@ -11,24 +11,16 @@ exports.orderPlaced = async (req, res) => {
       return res.status(400).json({ message: "Address ID is required" });
     }
 
-    // Find the user's cart
-    const userCart = await Cart.findOne({ userId }).populate("items.productId");
-
-    if (!userCart) {
-      return res.status(404).json({ message: "User's cart not found" });
+    const cart = await Cart.findOne({ userId });
+    if (!cart) {
+      throw new Error("No cart found for this user.");
     }
-
     // Map cart items to order items
-    const orderItems = userCart.items.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      totalCost: item.totalCost,
-    }));
 
     // Create the order
     const newOrder = new Order({
       userId,
-      items: orderItems,
+      items: cart.items,
       address: address,
       totalCost,
     });
