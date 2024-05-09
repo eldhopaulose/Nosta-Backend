@@ -23,12 +23,12 @@ const orderSchema = new mongoose.Schema({
         required: true,
         default: 1,
       },
-      totalCost: {
-        type: Number,
-        required: true,
-      },
     },
   ],
+  totalCost: {
+    type: Number,
+    required: true,
+  },
   address: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Address",

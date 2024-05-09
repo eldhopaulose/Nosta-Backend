@@ -6,7 +6,7 @@ exports.orderPlaced = async (req, res) => {
   try {
     const userId = req.user._id;
     console.log("User ID:", userId);
-    const { address } = req.body;
+    const { address, totalCost } = req.body;
 
     if (!address) {
       return res.status(400).json({ message: "Address is required" });
@@ -22,11 +22,12 @@ exports.orderPlaced = async (req, res) => {
       address,
       orderDate: new Date(),
       status: "Placed",
+      totalCost,
     });
 
     await order.save();
-    // Clear the cart after placing the order
-    await Cart.findByIdAndRemove(cart._id);
+    // // Clear the cart after placing the order
+    // await Cart.findByIdAndRemove(cart._id);
 
     res.status(200).json({ order });
     // ... rest of your code to create and save the order
