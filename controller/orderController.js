@@ -36,22 +36,14 @@ exports.orderPlaced = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate({
-        path: "items",
-        populate: {
-          path: "productId",
-          model: "Cart",
-          populate: {
-            path: "items.productId",
-            model: "Product",
-          },
-        },
+        path: "items.productId", // Populate the product details for each item
+        model: "Product",
       })
-      .populate("items.userId items.address");
+      .populate("userId address"); // Populate user and address for each order
 
     res.status(200).json({ orders });
   } catch (error) {
