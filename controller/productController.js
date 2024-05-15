@@ -105,6 +105,16 @@ exports.findProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
+  // Ensure category field is an array with the original category and "All"
+  if (updatedData.category) {
+    if (Array.isArray(updatedData.category)) {
+      updatedData.category.push("All");
+    } else {
+      updatedData.category = [updatedData.category, "All"];
+    }
+  } else {
+    updatedData.category = ["All"]; // If category field doesn't exist, create it with "All"
+  }
   console.log(updatedData);
   try {
     const updatedProduct = await Product.findByIdAndUpdate(id, updatedData, {
