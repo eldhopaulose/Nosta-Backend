@@ -15,6 +15,7 @@ const cartRouter = require("./routes/cart");
 const userLikedRouter = require("./routes/like");
 const adressRouter = require("./routes/address");
 const orderRouter = require("./routes/order");
+const offerRouter = require("./routes/offer");
 
 var app = express();
 
@@ -51,6 +52,8 @@ app.use("/api/adress", adressRouter);
 
 // Add the orderRouter to the app
 app.use("/api/order", orderRouter);
+
+app.use("/api/offer", offerRouter);
 
 mongoose
   .connect(process.env.MONG_URI)

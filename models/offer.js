@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
-
-const offerSchema = new Schema({
-  image: [],
+const offerSchema = new mongoose.Schema({
+  image: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
 });
 
 const Offer = mongoose.model("Offer", offerSchema);
+
+module.exports = Offer;
