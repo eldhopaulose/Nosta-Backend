@@ -31,7 +31,7 @@ async function sendOTP(email, otp) {
     from: process.env.SMS_USER,
     to: email,
     subject: "Verification OTP for Signup",
-    text: `Your OTP for signup is: ${otp}`,
+    text: `Your Nosta OTP for signup is: ${otp}`,
   });
 }
 
